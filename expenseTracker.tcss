@@ -23,9 +23,10 @@ Button {
 }
 
 
-# Titles
-.title {
+# Info
+.info {
     background: $boost;
-    min-width: 30;
+    min-width: 70;
     align: center middle;
+
 }

@@ -8,8 +8,6 @@ from textual.widgets import Button, Digits, Footer, Header, Label, Static
 
 
 
-
-
 class MainMenu(HorizontalGroup):
     """Main menu widget."""
 
@@ -26,22 +24,28 @@ class InfoScreen(Screen):
     """Info screen for the expense tracker"""
 
     CSS_PATH = "expenseTracker.tcss"
+    
 
     def compose(self) -> ComposeResult:
         """Create child widgets for the app."""
 
         yield Header()
         yield Footer()
-        yield Label("""     
+        yield Label("""  
+
+Created on Jan. 29, 2025.
 
 Contributers:
     - Jasper Wan
-    
+    - Andrii Aksonov
 
 Python third-party packages used:
     - Textual 1.0.0
     
-        """, classes="title")
+        """, classes="info")
+
+        yield Label("Press any key to return to main menu.")
+        
 
     def on_mount(self) -> None:
         self.title = "Info"
@@ -62,6 +66,7 @@ class ExpenseTrackerApp(App):
 
     def on_mount(self) -> None:
         self.title = "Expenses Tracker App"
+
 
     @on(Button.Pressed, ".main_menu")
     def on_button_pressed(self, event: Button.Pressed) -> None:
