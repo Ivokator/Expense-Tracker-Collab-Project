@@ -1,0 +1,31 @@
+MainMenu {
+    background: $boost;
+    height: 6;
+    margin: 1;
+    min-width: 30;
+    padding: 1;
+
+}
+
+Screen {
+    layout: vertical;
+    align: center middle;
+}
+
+
+Button {
+    width: 16;
+}
+
+.main_menu {
+    text-align: center;
+    margin: 1;
+}
+
+
+# Titles
+.title {
+    background: $boost;
+    min-width: 30;
+    align: center middle;
+}
