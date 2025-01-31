@@ -6,12 +6,18 @@ MainMenu {
     padding: 1;
 
 }
+Title {
+    color: $primary
+}
 
 Screen {
     layout: vertical;
     align: center middle;
 }
 
+Header {
+    text-style: bold;
+}
 
 Button {
     width: 16;
@@ -28,5 +34,7 @@ Button {
     background: $boost;
     min-width: 70;
     align: center middle;
+    outline: round $secondary;
+    padding: 1
 
 }
