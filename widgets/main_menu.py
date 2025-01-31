@@ -12,3 +12,5 @@ class MainMenu(HorizontalGroup):
         yield Button("View Expenses", id="view_expenses", classes="main_menu")
         yield Button("Info", id="info", classes="main_menu")
         yield Button("Exit Program", id="exit", classes="main_menu")
+
+    
