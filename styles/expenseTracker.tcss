@@ -38,3 +38,11 @@ Button {
     padding: 1
 
 }
+
+MainMenu {
+    align: center middle
+}
+
+#return_button {
+    dock: right
+}

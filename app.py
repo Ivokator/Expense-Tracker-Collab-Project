@@ -6,6 +6,7 @@ from textual.widgets import Button, Digits, Footer, Header, Label, Static
 
 from widgets.info_screen import InfoScreen
 from widgets.main_menu import MainMenu
+from widgets.view_expenses import ViewExpenses
 
 
 class ExpenseTrackerApp(App):
@@ -27,8 +28,12 @@ class ExpenseTrackerApp(App):
     def on_button_pressed(self, event: Button.Pressed) -> None:
         """Called when a button is pressed."""
         if event.button.id == "view_expenses":
-            ...
+            self.push_screen(ViewExpenses())
         elif event.button.id == "info":
             self.push_screen(InfoScreen())
         elif event.button.id == "exit":
-            ...
+            self.app.exit()
+            
+    @on(Button.Pressed, ".info_screen")
+    def go_back(self, event: Button.Pressed) -> None:
+        self.app.pop_screen()
