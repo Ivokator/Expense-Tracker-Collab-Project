@@ -1,6 +1,6 @@
 from textual import on
 from textual.app import App, ComposeResult
-from textual.containers import VetricalGroup, VerticalScroll
+from textual.containers import VerticalGroup, VerticalScroll
 from textual.screen import Screen
 from textual.widgets import Button, Digits, Footer, Header, Label, Static
 
@@ -15,7 +15,6 @@ class InfoScreen(Screen):
 
         yield Header()
         yield Footer()
-        with VetricalGroup
         yield Label("""  
 
 Created on Jan. 29, 2025.
