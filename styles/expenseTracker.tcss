@@ -23,6 +23,10 @@ Button {
     width: 16;
 }
 
+Collapsible {
+    
+}
+
 .main_menu {
     text-align: center;
     margin: 1;
