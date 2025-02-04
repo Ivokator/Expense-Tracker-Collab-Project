@@ -36,4 +36,5 @@ class ExpenseTrackerApp(App):
             
     @on(Button.Pressed, ".info_screen")
     def go_back(self, event: Button.Pressed) -> None:
-        self.app.pop_screen()
+        if event.button.id == "return_button":
+            self.app.pop_screen()

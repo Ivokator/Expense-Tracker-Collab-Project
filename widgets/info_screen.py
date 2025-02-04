@@ -28,7 +28,7 @@ Python third-party packages used:
     
         """,classes="info")
 
-        
+        yield Button("Return", id="return_button", classes="info_screen")
         
 
     def on_mount(self) -> None:

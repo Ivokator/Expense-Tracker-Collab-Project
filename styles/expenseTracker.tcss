@@ -43,7 +43,3 @@ Button {
 MainMenu {
     align: center middle
 }
-
-#return_button {
-    dock: right
-}
