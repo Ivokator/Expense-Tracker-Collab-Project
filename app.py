@@ -38,3 +38,7 @@ class ExpenseTrackerApp(App):
     def go_back(self, event: Button.Pressed) -> None:
         if event.button.id == "return_button":
             self.app.pop_screen()
+            
+    def action_collapse_or_expand(self, collapse: bool) -> None:
+        for child in self.walk_children(Collapsible):
+            child.collapsed = collapse

@@ -19,6 +19,10 @@ class ExpenseCategory(Widget):
 class ViewExpenses(Screen):
 
         def compose(self) -> ComposeResult:
+                yield Header()
+                yield Footer()
+                yield VerticalScroll()
+                
                 yield ExpenseCategory("Food")
                 yield ExpenseCategory("Housing")
                 yield ExpenseCategory("Transportation")
@@ -27,3 +31,7 @@ class ViewExpenses(Screen):
                 yield ExpenseCategory("Clothing")
                 yield ExpenseCategory("Education")
                 yield ExpenseCategory("Insurance")
+                
+                def action_collapse_or_expand(self, collapse: bool) -> None:
+                        for child in self.walk_children(Collapsible):
+                                child.collapsed = collapse

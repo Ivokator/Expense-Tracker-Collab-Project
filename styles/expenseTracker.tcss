@@ -47,3 +47,12 @@ Collapsible {
 MainMenu {
     align: center middle
 }
+
+ExpenseCategory {
+    padding: 0;
+    width: 30;
+}
+ViewExpenses {
+    layout: horizontal;
+    align: center top;
+}
