@@ -1,0 +1,64 @@
+{
+    "categories": {
+        "Food": [
+            {
+                "name": "Groceries",
+                "amount": 50.75,
+                "description": "Weekly grocery shopping",
+                "date": "2024-10-01"
+            },
+            {
+                "name": "Restaurant",
+                "amount": 30.00,
+                "description": "Dinner at a restaurant",
+                "date": "2024-10-02"
+            },
+            {
+                "name": "Coffee",
+                "amount": 5.25,
+                "description": "Morning coffee",
+                "date": "2024-10-03"
+            }
+        ],
+        "Transportation": [
+            {
+                "name": "Gas",
+                "amount": 40.00,
+                "description": "Fuel for the car",
+                "date": "2024-10-04"
+            },
+            {
+                "name": "Bus Ticket",
+                "amount": 2.50,
+                "description": "Bus fare",
+                "date": "2024-10-05"
+            },
+            {
+                "name": "Taxi",
+                "amount": 15.00,
+                "description": "Taxi ride",
+                "date": "2024-10-06"
+            }
+        ],
+        "Entertainment": [
+            {
+                "name": "Movie",
+                "amount": 12.00,
+                "description": "Movie ticket",
+                "date": "2024-10-07"
+            },
+            {
+                "name": "Concert",
+                "amount": 45.00,
+                "description": "Concert ticket",
+                "date": "2024-10-08"
+            },
+            {
+                "name": "Streaming Service",
+                "amount": 9.99,
+                "description": "",
+                "date": "2024-10-09"
+            }
+        ]
+    }
+}

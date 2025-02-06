@@ -1,6 +1,6 @@
 from textual import on
 from textual.app import App, ComposeResult
-from textual.containers import VerticalGroup, VerticalScroll
+from textual.containers import Container, VerticalGroup, VerticalScroll
 from textual.screen import Screen
 from textual.widgets import Button, Digits, Footer, Header, Label, Static
 
@@ -15,7 +15,7 @@ class InfoScreen(Screen):
 
         yield Header()
         yield Footer()
-        yield Label("""  
+        yield Container(Label("""  
 
 Created on Jan. 29, 2025.
 
@@ -26,9 +26,9 @@ Contributers:
 Python third-party packages used:
     - Textual 1.0.0
     
-        """,classes="info")
+        """), id="info")
 
-        yield Button("Return", id="return_button", classes="info_screen")
+        yield Button("Return", classes="return_button")
         
 
     def on_mount(self) -> None:

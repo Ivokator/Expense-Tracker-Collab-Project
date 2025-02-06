@@ -9,8 +9,8 @@ class MainMenu(HorizontalGroup):
 
     def compose(self) -> ComposeResult:
         """Create child widgets for the app."""
-        yield Button("View Expenses", id="view_expenses", classes="main_menu")
-        yield Button("Info", id="info", classes="main_menu")
+        yield Button("View Expenses", id="ViewExpenses", classes="main_menu")
+        yield Button("Info", id="InfoScreen", classes="main_menu")
         yield Button("Exit Program", id="exit", classes="main_menu")
 
     

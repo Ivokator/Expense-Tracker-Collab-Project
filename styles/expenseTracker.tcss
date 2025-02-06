@@ -1,3 +1,5 @@
+# TEXTUAL CLASSES
+
 MainMenu {
     background: $boost;
     height: 6;
@@ -11,8 +13,7 @@ Title {
 }
 
 Screen {
-    layout: vertical;
-    align: center middle;
+    
 }
 
 Header {
@@ -27,32 +28,64 @@ Collapsible {
     
 }
 
+
+Grid {
+    grid-size: 2;
+}
+
+Rule {
+    text-align: center;
+    width: 95%;
+    color: $background;
+}
+
+# CLASSES
+
 .main_menu {
     text-align: center;
     margin: 1;
     width: auto;
 }
 
+.expense_buttons {
+    text-align: center;
+    width: auto;
+}
 
-# Info
-.info {
-    background: $boost;
-    min-width: 70;
+.return_button {
+    margin: 1;
+}
+
+# IDs
+
+#info {
     align: center middle;
+    background: $boost;
     outline: round $secondary;
-    padding: 1
+    padding: 1;
+}
 
+# SCREENS
+
+AddExpense {
+    align: left bottom;
 }
 
 MainMenu {
-    align: center middle
+    align: center top;
 }
+
+ViewExpenses {
+    dock: top;
+    align: center top;
+}
+
+
+# WIDGETS
 
 ExpenseCategory {
     padding: 0;
-    width: 30;
-}
-ViewExpenses {
-    layout: horizontal;
-    align: center top;
+    text-align: center;
+    width: 100%;
+    height: 100%;
 }

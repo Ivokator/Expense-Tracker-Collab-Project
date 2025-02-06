@@ -1,21 +1,16 @@
 from textual import on
 from textual.app import App, ComposeResult
-from textual.containers import HorizontalGroup, VerticalScroll
+from textual.containers import Grid, HorizontalGroup, VerticalScroll
 from textual.screen import Screen
 from textual.widget import Widget
-from textual.widgets import Button, Digits, Footer, Header, Label, Static, Collapsible
+from textual.widgets import Button, Digits, Footer, Header, Label, Rule, Static, Collapsible
+
+import json
 
 
-class ExpenseCategory(Widget):
+class AddExpense(Screen):
+        ...
         
-        def __init__(self, category):
-                super().__init__()
-                self.category = category
-                
-        def compose(self) -> ComposeResult:
-                with Collapsible(title=self.category):
-                        yield Button("add expenses")
-                        
 class ViewExpenses(Screen):
 
         def compose(self) -> ComposeResult:
@@ -23,15 +18,25 @@ class ViewExpenses(Screen):
                 yield Footer()
                 yield VerticalScroll()
                 
-                yield ExpenseCategory("Food")
-                yield ExpenseCategory("Housing")
-                yield ExpenseCategory("Transportation")
-                yield ExpenseCategory("Healthcare") 
-                yield ExpenseCategory("Entertainment")
-                yield ExpenseCategory("Clothing")
-                yield ExpenseCategory("Education")
-                yield ExpenseCategory("Insurance")
-                
-                def action_collapse_or_expand(self, collapse: bool) -> None:
-                        for child in self.walk_children(Collapsible):
-                                child.collapsed = collapse
+
+                # Load the expenses from the JSON file
+
+                with open('user_data/expenses.json', 'r') as file:
+                        data = json.load(file)
+                        for category in data['categories']:
+                                with Collapsible(title=category, classes="category_collapsible"):
+                                                for expense in data['categories'][category]: # 'expense' is the most inner dictionary
+                                                        with Collapsible(title=f"{expense['name']}"):
+                                                                yield Label(f"Amount: ${expense['amount']:.2f}")
+                                                                yield Label(f"Date: {expense['date']}")
+                                                                yield Rule(line_style="heavy")
+                                                                if expense['description']:
+                                                                        yield Label(expense['description'])
+                                                yield Button("+", classes="expense_button")
+
+                        
+
+                yield Button("Return", classes="return_button")
+
+        def on_mount(self) -> None:
+                self.title = "Your Expenses"
