@@ -29,11 +29,18 @@ class ExpenseTrackerApp(App):
 
     @on(Button.Pressed, ".main_menu")
     def main_menu_button_pressed(self, event: Button.Pressed) -> None:
-        """Called when a button is pressed."""
+        """Called when a button is pressed in main menu."""
 
         if event.button.id == "exit":
             self.app.exit()
             return
+        
+        if event.button.id is not None:
+            self.push_screen(event.button.id)
+            
+    @on(Button.Pressed, ".expense_button")
+    def view_expenses_button_pressed(self, event: Button.Pressed) -> None:
+        """Called when a button is pressed in view expenses menu"""
         
         if event.button.id is not None:
             self.push_screen(event.button.id)
@@ -42,5 +49,6 @@ class ExpenseTrackerApp(App):
     def go_back(self, event: Button.Pressed) -> None:
         """Return to the previous screen."""
         self.app.pop_screen()
+        
 
     

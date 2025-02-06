@@ -8,6 +8,7 @@ MainMenu {
     padding: 1;
 
 }
+
 Title {
     color: $primary
 }
@@ -28,6 +29,9 @@ Collapsible {
     
 }
 
+Input {
+    width: 50;
+}
 
 Grid {
     grid-size: 2;
@@ -37,6 +41,14 @@ Rule {
     text-align: center;
     width: 95%;
     color: $background;
+}
+
+VerticalGroup {
+    align: center middle;
+}
+
+HorizontalGroup {
+    align: center middle;
 }
 
 # CLASSES
@@ -56,6 +68,9 @@ Rule {
     margin: 1;
 }
 
+.add_expense {
+    margin: 1;
+}
 # IDs
 
 #info {
@@ -68,7 +83,7 @@ Rule {
 # SCREENS
 
 AddExpense {
-    align: left bottom;
+    align: center middle;
 }
 
 MainMenu {
