@@ -1,6 +1,6 @@
 # Expense-Tracker-Collab-Project
 
-## Instuctions / How to Use
+## Instructions / How to Use
 
 
 
@@ -8,9 +8,11 @@
 ## Credits
 
 ### Jasper Wan (Ivokator)
-- Stylizing main menu
+- Majority of TCSS stylizing
+- Button functionality organization
 
 
 
 ### Andrii Aksonov (SkyVojager)
 - Project structuring
+- Expense viewer layout
