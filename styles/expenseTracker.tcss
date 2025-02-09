@@ -1,24 +1,17 @@
 # TEXTUAL CLASSES
 
-MainMenu {
-    background: $boost;
-    height: 6;
-    margin: 1;
-    min-width: 30;
-    padding: 1;
-
-}
 
 Title {
     color: $primary
 }
 
 Screen {
-    
+   
 }
 
 Header {
     text-style: bold;
+    max-height: 3;
 }
 
 Button {
@@ -59,9 +52,20 @@ HorizontalGroup {
     width: auto;
 }
 
-.expense_buttons {
+.expense_button {
     text-align: center;
     width: auto;
+    layout: horizontal;
+    min-height: 3;
+}
+
+
+
+.expense_collapsible Label {
+    align-vertical: middle;
+    background: $boost;
+    width: 95%;
+    min-height: 3;
 }
 
 .return_button {
@@ -71,6 +75,19 @@ HorizontalGroup {
 .add_expense {
     margin: 1;
 }
+
+.category_collapsible {
+    align-vertical: top;
+    margin: 0 1;
+}
+
+.DeleteExpense {
+    margin-top: 2;
+    align-horizontal: right;
+    width: auto;
+}
+
+
 # IDs
 
 #info {
@@ -78,6 +95,27 @@ HorizontalGroup {
     background: $boost;
     outline: round $secondary;
     padding: 1;
+}
+
+
+#delete_confirmation_static {
+    background: $boost;
+    outline: round $secondary;
+    padding: 1;
+    text-align: center;
+    content-align: center top;
+    width: auto;
+    layout: horizontal;
+    layer: above;
+}
+
+#delete_confirmation_static Button {
+    margin: 3 1 1 1;
+    height: 3;
+}
+
+#cancel_delete {
+    
 }
 
 # SCREENS
@@ -88,6 +126,11 @@ AddExpense {
 
 MainMenu {
     align: center top;
+    background: $boost;
+    height: 6;
+    margin: 1;
+    min-width: 30;
+    padding: 1;
 }
 
 ViewExpenses {
@@ -103,4 +146,19 @@ ExpenseCategory {
     text-align: center;
     width: 100%;
     height: 100%;
+}
+
+DeleteExpense {
+    align: center middle;
+    layers: above;
+}
+
+# WIDGET STATES
+
+.hidden {
+    display: none;
+}
+
+.green {
+    color: green;
 }

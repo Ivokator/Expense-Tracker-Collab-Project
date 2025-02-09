@@ -5,7 +5,9 @@ from textual.screen import Screen
 from textual.widgets import Button, Digits, Footer, Header, Label, Static
 from widgets.info_screen import InfoScreen
 from widgets.main_menu import MainMenu
-from widgets.view_expenses import AddExpense, ViewExpenses
+from widgets.view_expenses import AddExpense, DeleteExpense, ViewExpenses
+
+import json
 
 class ExpenseTrackerApp(App):
 
@@ -14,6 +16,7 @@ class ExpenseTrackerApp(App):
         "ViewExpenses": ViewExpenses,
         "AddExpense": AddExpense,
         "InfoScreen": InfoScreen,
+        "DeleteExpense": DeleteExpense
     }
     
     def compose(self) -> ComposeResult:
@@ -35,16 +38,30 @@ class ExpenseTrackerApp(App):
             self.app.exit()
             return
         
-        if event.button.id is not None:
+        elif event.button.id:
             self.push_screen(event.button.id)
             
     @on(Button.Pressed, ".expense_button")
-    def view_expenses_button_pressed(self, event: Button.Pressed) -> None:
+    def expense_button_pressed(self, event: Button.Pressed) -> None:
         """Called when a button is pressed in view expenses menu"""
-        
-        if event.button.id is not None:
+
+        if event.button.id:
             self.push_screen(event.button.id)
-    
+
+    @on(Button.Pressed, ".DeleteExpense")
+    def delete_confirmation_static(self, event: Button.Pressed) -> None:
+        """Called when the delete button is pressed."""
+        if event.button.name:
+            self.push_screen("DeleteExpense")
+            self.query_one(DeleteExpense).expense_name = event.button.name
+            self.query_one(DeleteExpense).category_name = str(event.button.id) # str | None otherwise if without str()
+
+    @on(Button.Pressed, "#cancel_delete")
+    def cancel_delete(self, event: Button.Pressed) -> None:
+        """Cancel the deletion of an expense."""
+        self.app.pop_screen()
+            
+
     @on(Button.Pressed, ".return_button")
     def go_back(self, event: Button.Pressed) -> None:
         """Return to the previous screen."""
