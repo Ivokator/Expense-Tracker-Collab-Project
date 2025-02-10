@@ -9,6 +9,7 @@ from widgets.view_expenses import AddExpense, DeleteExpense, ViewExpenses
 
 import json
 
+
 class ExpenseTrackerApp(App):
 
     CSS_PATH = "styles/expenseTracker.tcss" # constant!
@@ -54,7 +55,8 @@ class ExpenseTrackerApp(App):
         """Called when the delete button is pressed."""
         if event.button.name:
             self.push_screen("DeleteExpense")
-            self.query_one(DeleteExpense).expense_name = event.button.name
+
+            self.query_one(DeleteExpense).expense_name = str(event.button.name)
             self.query_one(DeleteExpense).category_name = str(event.button.id) # str | None otherwise if without str()
 
     @on(Button.Pressed, "#cancel_delete")

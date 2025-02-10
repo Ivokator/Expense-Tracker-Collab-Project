@@ -87,6 +87,14 @@ HorizontalGroup {
     width: auto;
 }
 
+.total_expenses {
+    background: $boost;
+    text-align: center;
+    margin: 1;
+    dock: top;
+    width: 100%;
+    height: 10;
+}
 
 # IDs
 
@@ -117,6 +125,15 @@ HorizontalGroup {
 #cancel_delete {
     
 }
+
+#total_expense_digits {
+    text-style: bold;
+    border: $primary;
+    align: center middle;
+    width: auto;
+}
+
+
 
 # SCREENS
 

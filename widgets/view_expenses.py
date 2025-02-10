@@ -1,5 +1,5 @@
 from textual import on
-from textual.app import App, ComposeResult
+from textual.app import App, ComposeResult, RenderResult
 from textual.containers import Grid, Container, HorizontalGroup, VerticalGroup, VerticalScroll
 from textual.reactive import reactive
 from textual.screen import Screen, ModalScreen
@@ -61,17 +61,22 @@ class AddExpense(Screen):
         self.app.push_screen(ViewExpenses())
 
 
+
+
 class DeleteExpense(ModalScreen):
     """A widget to confirm deletion of an expense."""
 
-    category_name = reactive("this category")
-    expense_name = reactive("this expense") # yes, formatted like this
+    category_name = reactive("this category", recompose=True)
+    expense_name = reactive("this expense", recompose=True) # yes, formatted like this
 
+
+    
     def compose(self) -> ComposeResult:
+
         with Static(f"Are you sure you want to delete [bold italic]{self.expense_name}[/]?", id="delete_confirmation_static"):
             yield Button("Yes", variant="error", id="confirm_delete")
             yield Button("No", variant="primary", id="cancel_delete")
-
+        
     @on(Button.Pressed, "#confirm_delete")
     def confirm_delete(self, event: Button.Pressed) -> None:
         """Delete an expense."""
@@ -98,8 +103,26 @@ class ViewExpenses(Screen):
     def compose(self) -> ComposeResult:
         
         yield Header()
+        
         yield Footer()
         yield VerticalScroll()
+        yield TotalExpenses()
+
+
+        # TODO: have this in TotalExpenses class and not here.
+        with Static("Total Expenses", classes="total_expenses"):
+
+            with open('user_data/expenses.json', 'r') as file:
+                data = json.load(file)
+                total_expenses: float = 0
+
+                for category in data['categories']:
+                        for expense in data['categories'][category]:
+                            total_expenses += expense['amount']
+            
+            
+            yield Digits(str(total_expenses), id="total_expense_digits")
+
 
         # Load the expenses from the JSON file
         with open('user_data/expenses.json', 'r') as file:
@@ -126,3 +149,22 @@ class ViewExpenses(Screen):
 
     def on_mount(self) -> None:
         self.title = "Your Expenses"
+
+
+
+class TotalExpenses(Static):
+    """A widget to display the total expenses."""
+
+    def compose(self) -> ComposeResult:
+        with Static("Total Expenses", classes="total_expenses"):
+
+            with open('user_data/expenses.json', 'r') as file:
+                data = json.load(file)
+                total_expenses: float = 0
+
+                for category in data['categories']:
+                        for expense in data['categories'][category]:
+                            total_expenses += expense['amount']
+            
+            
+            yield Digits(str(total_expenses), id="total_expense_digits")
