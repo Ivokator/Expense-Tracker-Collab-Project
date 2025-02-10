@@ -41,12 +41,13 @@ class ExpenseTrackerApp(App):
         elif event.button.id:
             self.push_screen(event.button.id)
             
-    @on(Button.Pressed, ".expense_button")
+    @on(Button.Pressed, ".AddExpense")
     def expense_button_pressed(self, event: Button.Pressed) -> None:
         """Called when a button is pressed in view expenses menu"""
 
         if event.button.id:
-            self.push_screen(event.button.id)
+            self.push_screen("AddExpense")
+            self.query_one(AddExpense).category_name = str(event.button.id)
 
     @on(Button.Pressed, ".DeleteExpense")
     def delete_confirmation_static(self, event: Button.Pressed) -> None:

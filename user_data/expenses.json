@@ -2,22 +2,10 @@
     "categories": {
         "Entertainment": [
             {
-                "amount": 12.0,
-                "date": "2024-10-07",
-                "description": "Movie ticket",
-                "name": "Movie"
-            },
-            {
-                "amount": 45.0,
-                "date": "2024-10-08",
-                "description": "Concert ticket",
-                "name": "Concert"
-            },
-            {
-                "amount": 9.99,
-                "date": "2024-10-09",
-                "description": "",
-                "name": "Streaming Service"
+                "amount": 18.0,
+                "date": "2025-02-09",
+                "description": "Neflix Subscription",
+                "name": "neflix"
             }
         ],
         "Food": [

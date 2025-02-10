@@ -12,18 +12,53 @@ import json
 
 
 class AddExpense(Screen):
+    """A widget to add an expense."""
+
+    #Do NOT touch this code, if it breaks, it breaks. I'm not fixing it.
+
+    category_name = reactive("this category")
+
     def compose(self) -> ComposeResult:
 
         yield Header()
         yield Footer()
         with VerticalGroup():
-            yield Input(placeholder="Expense")
-            yield Input(placeholder="Amount")
-            yield Input(placeholder="Description")
-            yield Input(placeholder="Date")
+            self.expense_input = Input(placeholder="Expense")
+            self.amount_input = Input(placeholder="Amount")
+            self.description_input = Input(placeholder="Description")
+            self.date_input = Input(placeholder="Date (year-month-day)") #TODO: Add a date picker
+            yield self.expense_input
+            yield self.amount_input
+            yield self.description_input
+            yield self.date_input
+
         with HorizontalGroup():
-            yield Button("Add", classes="add_expense")
+            yield Button("Add", classes="add_expense", id="add_expense_button")
             yield Button("Return", classes="return_button add_expense")
+
+    @on(Button.Pressed, "#add_expense_button")
+    def add_expense(self, event: Button.Pressed) -> None:
+        
+        new_expense = {
+            "name": self.expense_input.value,
+            "amount": float(self.amount_input.value),
+            "description": self.description_input.value,
+            "date": self.date_input.value
+        }
+
+        with open('user_data/expenses.json', 'r') as file:
+            data = json.load(file)
+
+        if self.category_name not in data['categories']:
+            data['categories'][self.category_name] = []
+
+        data['categories'][self.category_name].append(new_expense)
+
+        with open('user_data/expenses.json', 'w') as file:
+            json.dump(data, file, indent=4, sort_keys=True, separators=(',', ': ')) #I swear i did not copied the code down below from the DeleteExpense class, okay i did.
+
+        self.app.pop_screen()
+        self.app.push_screen(ViewExpenses())
 
 
 class DeleteExpense(ModalScreen):
@@ -56,7 +91,6 @@ class DeleteExpense(ModalScreen):
                 json.dump(data, file, indent=4, sort_keys=True, separators=(',', ': '))
         self.app.pop_screen()
         self.app.push_screen(ViewExpenses()) # dammit, this is a hacky way to update the ViewExpenses screen
-
     
 
 class ViewExpenses(Screen):
@@ -83,7 +117,7 @@ class ViewExpenses(Screen):
                         
                             yield Button("Delete", id=category, classes="DeleteExpense", name=expense['name']) # absolutely trash disgusting code but it works
                             
-                    yield Button("Add an expense", id="AddExpense", classes="expense_button")
+                    yield Button("Add an expense", id=category, classes="AddExpense")
                     
 
         yield Button("Return", classes="return_button")
