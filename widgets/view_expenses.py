@@ -1,11 +1,12 @@
 from textual import on
-from textual.app import App, ComposeResult
+from textual.app import App, ComposeResult, RenderResult
 from textual.containers import Grid, Container, HorizontalGroup, VerticalGroup, VerticalScroll
 from textual.validation import Function, Number, ValidationResult, Validator
 from textual.reactive import reactive
 from textual.screen import Screen, ModalScreen
 from textual.widget import Widget
-from textual.widgets import Button, Digits, Footer, Header, Label, Rule, Static, Collapsible, Input
+from textual.widgets import Button, Collapsible, ContentSwitcher, Digits, Footer, Header, Input, Label, OptionList, Rule, Static, Tabs, Tree
+
 
 
 
@@ -78,8 +79,8 @@ class AddExpense(Screen):
 class DeleteExpense(ModalScreen):
     """A widget to confirm deletion of an expense."""
 
-    category_name = reactive("this category")
-    expense_name = reactive("this expense") # yes, formatted like this
+    category_name = reactive("this category", recompose=True)
+    expense_name = reactive("this expense", recompose=True) # yes, formatted like this
 
     def compose(self) -> ComposeResult:
         with Static(f"Are you sure you want to delete [bold italic]{self.expense_name}[/]?", id="delete_confirmation_static"):
@@ -106,45 +107,81 @@ class DeleteExpense(ModalScreen):
         self.app.pop_screen()
         self.app.push_screen(ViewExpenses()) # dammit, this is a hacky way to update the ViewExpenses screen
         
-class ErrorScreen(Screen):
+class ErrorScreen(ModalScreen):
     
     def compose(self) -> ComposeResult:
-        yield Header()
-        yield Footer()
-        yield Label("Error: Invalid input")
-        yield Button("Return", classes="return_button")
+        with Static("Error: Invalid input", id="error_static"):
+            yield Button("Return", variant="primary", classes="return_button")
         
     
 class ViewExpenses(Screen):
 
     def compose(self) -> ComposeResult:
         
-        yield Header()
-        yield Footer()
+        
         yield VerticalScroll()
+        yield Tabs("Basic", "Summary", "Spending Trends", classes="main_tabs")
+
 
         # Load the expenses from the JSON file
         with open('user_data/expenses.json', 'r') as file:
             data = json.load(file)
-            for category in data['categories']:
-                with Collapsible(title=category, classes="category_collapsible"):
-                    for expense in data['categories'][category]:  # 'expense' is the most inner dictionary
-                        with Collapsible(title=f"{expense['name']}", classes="expense_collapsible"):
-                            yield Label(f"Amount: ${expense['amount']:.2f}")
-                            yield Label(f"Date: {expense['date']}")
-                            yield Rule(line_style="heavy")
+            total_expenses: float = 0
 
-                            if expense['description']:
-                                yield Label(expense['description'])
-                        
-                            yield Button("Delete", id=category, classes="DeleteExpense", name=expense['name']) # absolutely trash disgusting code but it works
+            tree: Tree[str] = Tree("All Expenses", classes="expenses_tree")
+            tree.root.expand()
+
+            with Static(classes="expense_static"):
+                for category in data['categories']:
+                    tree_category = tree.root.add(category)
+
+                    with Collapsible(title=category, classes="category_collapsible"):
+                        for expense in data['categories'][category]:  # 'expense' is the most inner dictionary
+
+                            total_expenses += expense['amount']
+                            tree_category.add_leaf(expense['name'])
+
+                            with Collapsible(title=f"{expense['name']}", classes="expense_collapsible"):
+                                yield Label(f"Amount: ${expense['amount']:.2f}")
+                                yield Label(f"Date: {expense['date']}")
+                                yield Rule(line_style="heavy")
+
+                                if expense['description']:
+                                    yield Label(expense['description'])
                             
-                    yield Button("Add an expense", id=category, classes="AddExpense")
-                    
+                                yield Button("Delete", id=category, classes="DeleteExpense", name=expense['name']) # absolutely trash disgusting code but it works
+                                
+                        yield Button("Add an expense", id=category, classes="AddExpense")
+
+            with Static(classes="side_bar"):
+                with VerticalScroll():
+                    yield Label("Total expenses", classes="side_bar_label")
+                    yield Digits(str(total_expenses), id="total_expense_digits")
+                    yield Rule(line_style="heavy")
+                    yield tree
+                    yield Rule(line_style="heavy")
+
+                    # Filter time period
+                    yield Label("Filter by time", classes="side_bar_label")
+                    yield OptionList(
+                        "All time",
+                        "This year",
+                        "This month",
+                        "This week",
+                        classes="time_period_option_list"
+                    )
+
+                
 
         yield Button("Return", classes="return_button")
-    
-    
+
+        yield Header()
+        yield Footer()
+
+
+
+# union
+
 def is_integer(value: str) -> bool:
     try:
         int(value)

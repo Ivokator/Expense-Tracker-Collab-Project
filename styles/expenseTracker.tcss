@@ -19,7 +19,7 @@ Button {
 }
 
 Collapsible {
-    
+    text-style: bold;
 }
 
 Input {
@@ -87,13 +87,35 @@ HorizontalGroup {
     width: auto;
 }
 
-.total_expenses {
+.side_bar {
     background: $boost;
+    padding-top: 3;
+    align: center middle;
+    dock: left;
+    width: 20%;
+    height: 100%;
     text-align: center;
-    margin: 1;
-    dock: top;
-    width: 100%;
-    height: 10;
+}
+
+.expense_static {
+    content-align-vertical: top;
+    align-vertical: top;
+}
+
+.side_bar_label {
+    width: auto;
+    margin: 0;
+    padding: 0;
+}
+
+.main_tabs {
+    margin-top: 6;
+    height: 2;
+}
+
+.expenses_tree {
+    height: 35%
+
 }
 
 # IDs
@@ -106,7 +128,7 @@ HorizontalGroup {
 }
 
 
-#delete_confirmation_static {
+#delete_confirmation_static, #error_static {
     background: $boost;
     outline: round $secondary;
     padding: 1;
@@ -117,7 +139,13 @@ HorizontalGroup {
     layer: above;
 }
 
-#delete_confirmation_static Button {
+#error_static {
+    min_width: 20;
+    align: center middle;
+}
+
+#delete_confirmation_static Button, #error_static Button {
+    align-horizontal: center;
     margin: 3 1 1 1;
     height: 3;
 }
@@ -127,13 +155,13 @@ HorizontalGroup {
 }
 
 #total_expense_digits {
+    margin: 1;
     text-style: bold;
-    border: $primary;
+    border: double;
+    outline: round $secondary;
     align: center middle;
     width: auto;
 }
-
-
 
 # SCREENS
 
@@ -151,11 +179,14 @@ MainMenu {
 }
 
 ViewExpenses {
-    dock: top;
-    align: center top;
+    layers: above;
+
 }
 
-
+DeleteExpense, ErrorScreen {
+    align: center middle;
+    layers: above;
+}
 # WIDGETS
 
 ExpenseCategory {
@@ -165,10 +196,7 @@ ExpenseCategory {
     height: 100%;
 }
 
-DeleteExpense {
-    align: center middle;
-    layers: above;
-}
+
 
 # WIDGET STATES
 

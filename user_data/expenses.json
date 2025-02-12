@@ -41,6 +41,76 @@
                 "description": "Taxi ride",
                 "name": "Taxi"
             }
+        ],
+        "Health": [
+            {
+                "amount": 25.0,
+                "date": "2024-10-07",
+                "description": "Pharmacy purchase",
+                "name": "Medicine"
+            },
+            {
+                "amount": 100.0,
+                "date": "2024-10-08",
+                "description": "Doctor's appointment",
+                "name": "Doctor"
+            }
+        ],
+        "Utilities": [
+            {
+                "amount": 60.0,
+                "date": "2024-10-09",
+                "description": "Electricity bill",
+                "name": "Electricity"
+            },
+            {
+                "amount": 30.0,
+                "date": "2024-10-10",
+                "description": "Water bill",
+                "name": "Water"
+            }
+        ],
+        "Education": [
+            {
+                "amount": 200.0,
+                "date": "2024-10-11",
+                "description": "Course fee",
+                "name": "Online Course"
+            },
+            {
+                "amount": 50.0,
+                "date": "2024-10-12",
+                "description": "Books purchase",
+                "name": "Books"
+            }
+        ],
+        "Shopping": [
+            {
+                "amount": 75.0,
+                "date": "2024-10-13",
+                "description": "Clothes shopping",
+                "name": "Clothes"
+            },
+            {
+                "amount": 120.0,
+                "date": "2024-10-14",
+                "description": "Electronics purchase",
+                "name": "Electronics"
+            }
+        ],
+        "Travel": [
+            {
+                "amount": 300.0,
+                "date": "2024-10-15",
+                "description": "Flight ticket",
+                "name": "Flight"
+            },
+            {
+                "amount": 150.0,
+                "date": "2024-10-16",
+                "description": "Hotel booking",
+                "name": "Hotel"
+            }
         ]
     }
 }
