@@ -19,7 +19,6 @@ Button {
 }
 
 Collapsible {
-    text-style: bold;
     background: $panel 50%;
 }
 
@@ -103,6 +102,11 @@ HorizontalGroup {
     align-vertical: top;
 }
 
+.expense_tabbed {
+    width: 100%;
+    height: 100%;
+}
+
 .side_bar_label {
     width: auto;
     margin: 0;
@@ -111,6 +115,7 @@ HorizontalGroup {
 
 .main_tabs {
     margin-top: 6;
+    align: center top;
     height: 2;
 }
 
@@ -168,6 +173,11 @@ HorizontalGroup {
     align: center middle;
     width: auto;
 }
+
+.expense_tabbed#summary_tab {
+    
+}
+
 
 # SCREENS
 

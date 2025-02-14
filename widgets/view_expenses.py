@@ -141,7 +141,7 @@ class ViewExpenses(Screen):
 
 
             
-            with (basic_tab := Static(classes="expense_static")):
+            with (basic_tab := Static(classes="expense_static expense_tabbed", id="basic_tab")):
                 for category in data['categories']:
                     tree_category = tree.root.add(category)
 
@@ -190,13 +190,13 @@ class ViewExpenses(Screen):
 
                         yield Button("Add an expense", id=category, classes="AddExpense")
 
-            with (summary_tab := Static(classes="")):
+            with (summary_tab := Static(classes="expense_tabbed", id="summary_tab")):
                 ...
             
-            with (spending_trends_tab := Static(classes="")):
+            with (spending_trends_tab := Static(classes="expense_tabbed", id="spending_trends_tab")):
                 ...
 
-            with Static(classes="side_bar"):
+            with Static(classes="side_bar", id="docked_side_bar"):
                 with VerticalScroll():
                     yield Label("Total expenses", classes="side_bar_label")
                     yield Digits(str(total_expenses), id="total_expense_digits")
@@ -219,13 +219,6 @@ class ViewExpenses(Screen):
 
         yield Header()
         yield Footer()
-
-
-
-class SummaryTab(Static):
-    def on_mount(self):
-        ...
-
 
 
 

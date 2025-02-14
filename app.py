@@ -82,7 +82,14 @@ class ExpenseTrackerApp(App):
     @on(Tabs.TabActivated, ".main_tabs")
     def switch_main_tabs(self, event: Tabs.TabActivated) -> None:
         activated_tab = str(event.tab.id)
-        self.notify(activated_tab)
-        if event.tab is None:
-            ...
+        current_tab = self.query_one(ViewExpenses).children
+
+
+        for widget in current_tab:
+            if isinstance(widget, Static):
+                if widget.id == activated_tab or widget.id == "docked_side_bar":
+                    widget.remove_class("hidden")
+                else:
+                    widget.add_class("hidden")
+                    widget.update()
         
