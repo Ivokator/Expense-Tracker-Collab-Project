@@ -5,13 +5,13 @@ from textual.validation import Function, Number, ValidationResult, Validator
 from textual.reactive import reactive
 from textual.screen import Screen, ModalScreen
 from textual.widget import Widget
-from textual.widgets import Button, Collapsible, ContentSwitcher, Digits, Footer, Header, Input, Label, OptionList, Rule, Static, Tabs, Tree
+from textual.widgets import Button, Collapsible, ContentSwitcher, Digits, Footer, Header, Input, Label, OptionList, Rule, Static, Tab, Tabs, Tree
 
 
 
 
 import json
-
+from datetime import datetime
 
 class AddExpense(Screen):
     """A widget to add an expense."""
@@ -116,11 +116,19 @@ class ErrorScreen(ModalScreen):
     
 class ViewExpenses(Screen):
 
+    current_filter = reactive("All time", recompose=True)
+    activated_tab = reactive("tab-1", recompose=True)
+
     def compose(self) -> ComposeResult:
         
         
         yield VerticalScroll()
-        yield Tabs("Basic", "Summary", "Spending Trends", classes="main_tabs")
+        yield Tabs(
+            Tab("Basic", id="basic_tab"), 
+            Tab("Summary", id="summary_tab"), 
+            Tab("Spending Trends", id="spending_trends_tab"), 
+            
+            classes="main_tabs")
 
 
         # Load the expenses from the JSON file
@@ -131,27 +139,62 @@ class ViewExpenses(Screen):
             tree: Tree[str] = Tree("All Expenses", classes="expenses_tree")
             tree.root.expand()
 
-            with Static(classes="expense_static"):
+
+            
+            with (basic_tab := Static(classes="expense_static")):
                 for category in data['categories']:
                     tree_category = tree.root.add(category)
 
-                    with Collapsible(title=category, classes="category_collapsible"):
+                    with (category_collapsible := Collapsible(title=category, classes="category_collapsible")):
                         for expense in data['categories'][category]:  # 'expense' is the most inner dictionary
+                            
+                            expense_date = datetime.strptime(expense['date'], "%Y-%m-%d")
+                            current_date = datetime.now()
+
+                            include_expense: bool
+                            diminish_category: bool = True
+
+                            if self.current_filter == "All time":
+                                include_expense = True
+                            elif self.current_filter == "This year":
+                                include_expense = expense_date.year == current_date.year
+                            elif self.current_filter == "This month":
+                                include_expense = expense_date.year == current_date.year and expense_date.month == current_date.month
+                            elif self.current_filter == "This week":
+                                # isocalendar() returns a tuple (year, week number, weekday)
+                                include_expense = expense_date.isocalendar()[1] == current_date.isocalendar()[1] and expense_date.year == current_date.year
+                            else:
+                                include_expense = False
 
                             total_expenses += expense['amount']
-                            tree_category.add_leaf(expense['name'])
 
-                            with Collapsible(title=f"{expense['name']}", classes="expense_collapsible"):
-                                yield Label(f"Amount: ${expense['amount']:.2f}")
-                                yield Label(f"Date: {expense['date']}")
-                                yield Rule(line_style="heavy")
-
-                                if expense['description']:
-                                    yield Label(expense['description'])
-                            
-                                yield Button("Delete", id=category, classes="DeleteExpense", name=expense['name']) # absolutely trash disgusting code but it works
+                            if include_expense:
+                                diminish_category = False
                                 
+                                tree_category.add_leaf(expense['name'])
+
+                                with Collapsible(title=f"{expense['name']}", classes="expense_collapsible"):
+                                    yield Label(f"Amount: ${expense['amount']:.2f}")
+                                    yield Label(f"Date: {expense['date']}")
+                                    yield Rule(line_style="heavy")
+
+                                    if expense['description']:
+                                        yield Label(expense['description'])
+
+                                    yield Button("Delete", id=category, classes="DeleteExpense", name=expense['name']) # absolutely trash disgusting code but it works
+                                
+
+                        if diminish_category:
+                            category_collapsible.add_class("diminish_category")
+                            yield Label("No expenses in this category.", classes="no_expenses_label")
+
                         yield Button("Add an expense", id=category, classes="AddExpense")
+
+            with (summary_tab := Static(classes="")):
+                ...
+            
+            with (spending_trends_tab := Static(classes="")):
+                ...
 
             with Static(classes="side_bar"):
                 with VerticalScroll():
@@ -163,6 +206,7 @@ class ViewExpenses(Screen):
 
                     # Filter time period
                     yield Label("Filter by time", classes="side_bar_label")
+
                     yield OptionList(
                         "All time",
                         "This year",
@@ -171,12 +215,17 @@ class ViewExpenses(Screen):
                         classes="time_period_option_list"
                     )
 
-                
-
-        yield Button("Return", classes="return_button")
+                yield Button("Return", classes="return_button")
 
         yield Header()
         yield Footer()
+
+
+
+class SummaryTab(Static):
+    def on_mount(self):
+        ...
+
 
 
 

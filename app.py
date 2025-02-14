@@ -2,7 +2,7 @@ from textual import on, events
 from textual.app import App, ComposeResult
 from textual.containers import HorizontalGroup, VerticalScroll
 from textual.screen import Screen
-from textual.widgets import Button, Digits, Footer, Header, Label, Static
+from textual.widgets import Button, Digits, Footer, Header, Label, OptionList, Static, Tabs
 from widgets.info_screen import InfoScreen
 from widgets.main_menu import MainMenu
 from widgets.view_expenses import AddExpense, DeleteExpense, ViewExpenses
@@ -69,6 +69,20 @@ class ExpenseTrackerApp(App):
     def go_back(self, event: Button.Pressed) -> None:
         """Return to the previous screen."""
         self.app.pop_screen()
-        
-
     
+    @on(OptionList.OptionSelected, ".time_period_option_list")
+    def on_option_list_option_selected(self, event: OptionList.OptionSelected) -> None:
+        option_name = str(event.option.prompt)
+
+        if option_name in ["All time", "This year", "This month", "This week"]:
+            self.query_one(ViewExpenses).current_filter = option_name
+        else:
+            self.notify("Invalid option selected")
+
+    @on(Tabs.TabActivated, ".main_tabs")
+    def switch_main_tabs(self, event: Tabs.TabActivated) -> None:
+        activated_tab = str(event.tab.id)
+        self.notify(activated_tab)
+        if event.tab is None:
+            ...
+        

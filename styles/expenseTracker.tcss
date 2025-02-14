@@ -20,6 +20,7 @@ Button {
 
 Collapsible {
     text-style: bold;
+    background: $panel 50%;
 }
 
 Input {
@@ -116,6 +117,11 @@ HorizontalGroup {
 .expenses_tree {
     height: 35%
 
+}
+
+.diminish_category {
+    text-style: none;
+    background: $panel 10%;
 }
 
 # IDs
