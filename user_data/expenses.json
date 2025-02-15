@@ -3,7 +3,7 @@
         "Entertainment": [
             {
                 "amount": 18.0,
-                "date": "2025-02-09",
+                "date": "2024-09-15",
                 "description": "Neflix Subscription",
                 "name": "neflix"
             }
@@ -11,13 +11,13 @@
         "Food": [
             {
                 "amount": 50.75,
-                "date": "2024-10-01",
+                "date": "2024-09-20",
                 "description": "Weekly grocery shopping",
                 "name": "Groceries"
             },
             {
                 "amount": 30.0,
-                "date": "2024-10-02",
+                "date": "2024-09-25",
                 "description": "Dinner at a restaurant",
                 "name": "Restaurant"
             }
@@ -25,7 +25,7 @@
         "Transportation": [
             {
                 "amount": 40.0,
-                "date": "2024-10-04",
+                "date": "2024-10-01",
                 "description": "Fuel for the car",
                 "name": "Gas"
             },
@@ -37,7 +37,7 @@
             },
             {
                 "amount": 15.0,
-                "date": "2024-10-06",
+                "date": "2024-10-10",
                 "description": "Taxi ride",
                 "name": "Taxi"
             }
@@ -45,13 +45,13 @@
         "Health": [
             {
                 "amount": 25.0,
-                "date": "2024-10-07",
+                "date": "2024-10-15",
                 "description": "Pharmacy purchase",
                 "name": "Medicine"
             },
             {
                 "amount": 100.0,
-                "date": "2024-10-08",
+                "date": "2024-10-20",
                 "description": "Doctor's appointment",
                 "name": "Doctor"
             }
@@ -59,13 +59,13 @@
         "Utilities": [
             {
                 "amount": 60.0,
-                "date": "2024-10-09",
+                "date": "2024-11-01",
                 "description": "Electricity bill",
                 "name": "Electricity"
             },
             {
                 "amount": 30.0,
-                "date": "2024-10-10",
+                "date": "2024-11-05",
                 "description": "Water bill",
                 "name": "Water"
             }
@@ -73,41 +73,47 @@
         "Education": [
             {
                 "amount": 200.0,
-                "date": "2024-10-11",
+                "date": "2024-11-10",
                 "description": "Course fee",
                 "name": "Online Course"
             },
             {
                 "amount": 50.0,
-                "date": "2024-10-12",
+                "date": "2024-11-15",
                 "description": "Books purchase",
                 "name": "Books"
             }
         ],
         "Shopping": [
             {
-                "amount": 75.0,
-                "date": "2024-10-13",
+                "amount": 75.16,
+                "date": "2024-12-01",
                 "description": "Clothes shopping",
                 "name": "Clothes"
             },
             {
-                "amount": 120.0,
-                "date": "2024-10-14",
+                "amount": 120.04,
+                "date": "2024-12-10",
                 "description": "Electronics purchase",
                 "name": "Electronics"
             }
         ],
         "Travel": [
             {
-                "amount": 300.0,
-                "date": "2024-10-15",
+                "amount": 301.90,
+                "date": "2025-01-01",
                 "description": "Flight ticket",
                 "name": "Flight"
             },
             {
-                "amount": 150.0,
-                "date": "2024-10-16",
+                "amount": 251.96,
+                "date": "2025-02-01",
+                "description": "Bought souvenirs",
+                "name": "Souvenirs"
+            },
+            {
+                "amount": 150.05,
+                "date": "2025-02-15",
                 "description": "Hotel booking",
                 "name": "Hotel"
             }

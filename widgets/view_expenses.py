@@ -5,7 +5,7 @@ from textual.validation import Function, Number, ValidationResult, Validator
 from textual.reactive import reactive
 from textual.screen import Screen, ModalScreen
 from textual.widget import Widget
-from textual.widgets import Button, Collapsible, ContentSwitcher, Digits, Footer, Header, Input, Label, OptionList, Rule, Static, Tab, Tabs, Tree
+from textual.widgets import Button, Collapsible, ContentSwitcher, Digits, Footer, Header, Input, Label, ListItem, ListView, OptionList, Rule, Static, Tab, Tabs, Tree
 
 
 
@@ -116,15 +116,13 @@ class ErrorScreen(ModalScreen):
     
 class ViewExpenses(Screen):
 
-    current_filter = reactive("All time", recompose=True)
-    activated_tab = reactive("tab-1", recompose=True)
+    current_filter = reactive("option_all_time", recompose=True)
+    activated_tab = reactive("basic_tab", recompose=True)
 
     def compose(self) -> ComposeResult:
-        
-        
-        yield VerticalScroll()
+
         yield Tabs(
-            Tab("Basic", id="basic_tab"), 
+            Tab("Expenses", id="basic_tab"), 
             Tab("Summary", id="summary_tab"), 
             Tab("Spending Trends", id="spending_trends_tab"), 
             
@@ -134,95 +132,153 @@ class ViewExpenses(Screen):
         # Load the expenses from the JSON file
         with open('user_data/expenses.json', 'r') as file:
             data = json.load(file)
-            total_expenses: float = 0
+            total_expenses: float | int = 0
+
+            year_expenses: float | int = 0
+            month_expenses: float | int = 0
+            week_expenses: float | int = 0
 
             tree: Tree[str] = Tree("All Expenses", classes="expenses_tree")
             tree.root.expand()
-
-
             
             with (basic_tab := Static(classes="expense_static expense_tabbed", id="basic_tab")):
-                for category in data['categories']:
-                    tree_category = tree.root.add(category)
+                with VerticalScroll():
+                    for category in data['categories']:
+                        tree_category = tree.root.add(category)
 
-                    with (category_collapsible := Collapsible(title=category, classes="category_collapsible")):
-                        for expense in data['categories'][category]:  # 'expense' is the most inner dictionary
-                            
-                            expense_date = datetime.strptime(expense['date'], "%Y-%m-%d")
-                            current_date = datetime.now()
-
-                            include_expense: bool
-                            diminish_category: bool = True
-
-                            if self.current_filter == "All time":
-                                include_expense = True
-                            elif self.current_filter == "This year":
-                                include_expense = expense_date.year == current_date.year
-                            elif self.current_filter == "This month":
-                                include_expense = expense_date.year == current_date.year and expense_date.month == current_date.month
-                            elif self.current_filter == "This week":
-                                # isocalendar() returns a tuple (year, week number, weekday)
-                                include_expense = expense_date.isocalendar()[1] == current_date.isocalendar()[1] and expense_date.year == current_date.year
-                            else:
-                                include_expense = False
-
-                            total_expenses += expense['amount']
-
-                            if include_expense:
-                                diminish_category = False
+                        with (category_collapsible := Collapsible(title=category, classes="category_collapsible")):
+                            for expense in data['categories'][category]:  # 'expense' is the most inner dictionary
                                 
+                                expense_date = datetime.strptime(expense['date'], "%Y-%m-%d")
+                                current_date = datetime.now()
+
+                                include_expense: bool
+                                diminish_category: bool = True
+                                filter_index: int = 0
+                                
+                                if self.current_filter == "option_all_time":
+                                    include_expense, filter_index = True, 0
+                                elif self.current_filter == "option_this_year":
+                                    include_expense, filter_index = is_expense_this_year(expense_date, current_date)
+                                elif self.current_filter == "option_this_month":
+                                    include_expense, filter_index = is_expense_this_month(expense_date, current_date)
+                                elif self.current_filter == "option_this_week":
+                                    include_expense, filter_index = is_expense_this_week(expense_date, current_date)
+                                else:
+                                    include_expense = False
+
+                                if is_expense_this_year(expense_date, current_date)[0]:
+                                    year_expenses += expense['amount']
+
+                                    if is_expense_this_month(expense_date, current_date)[0]:
+                                        month_expenses += expense['amount']
+
+                                        if is_expense_this_week(expense_date, current_date)[0]:
+                                            week_expenses += expense['amount']
+
+                                total_expenses += expense['amount']
                                 tree_category.add_leaf(expense['name'])
 
-                                with Collapsible(title=f"{expense['name']}", classes="expense_collapsible"):
-                                    yield Label(f"Amount: ${expense['amount']:.2f}")
-                                    yield Label(f"Date: {expense['date']}")
-                                    yield Rule(line_style="heavy")
+                                if include_expense:
+                                    diminish_category = False
+                                    
+                                    with Collapsible(title=f"{expense['name']}", classes="expense_collapsible"):
+                                        yield Label(f"Amount: ${expense['amount']:.2f}")
+                                        yield Label(f"Date: {expense['date']}")
+                                        yield Rule(line_style="heavy")
 
-                                    if expense['description']:
-                                        yield Label(expense['description'])
+                                        if expense['description']:
+                                            yield Label(expense['description'])
 
-                                    yield Button("Delete", id=category, classes="DeleteExpense", name=expense['name']) # absolutely trash disgusting code but it works
-                                
+                                        yield Button("Delete", id=category, classes="DeleteExpense", name=expense['name']) # absolutely trash disgusting code but it works
+                                    
 
-                        if diminish_category:
-                            category_collapsible.add_class("diminish_category")
-                            yield Label("No expenses in this category.", classes="no_expenses_label")
+                            if diminish_category:
+                                category_collapsible.add_class("diminish_category")
+                                yield Label("No expenses in this category.", classes="no_expenses_label")
 
-                        yield Button("Add an expense", id=category, classes="AddExpense")
+                            yield Button("Add an expense", id=category, classes="AddExpense")
 
-            with (summary_tab := Static(classes="expense_tabbed", id="summary_tab")):
-                ...
+                with Static(id="expense_side_bar"):
+                        # Filter time period
+                        yield Label("Filter by time\n", classes="side_bar_label")
+
+
+                        yield ListView(
+                            ListItem(Label("All time"), id="option_all_time"),
+                            ListItem(Label("This year"), id="option_this_year"),
+                            ListItem(Label("This month"), id="option_this_month"),
+                            ListItem(Label("This week"), id="option_this_week"),
+                            classes="time_period_list_view",
+                            initial_index=filter_index
+                        )
+
+            yield SummaryTab(total_expenses, year_expenses, month_expenses, week_expenses)
             
             with (spending_trends_tab := Static(classes="expense_tabbed", id="spending_trends_tab")):
                 ...
 
             with Static(classes="side_bar", id="docked_side_bar"):
                 with VerticalScroll():
-                    yield Label("Total expenses", classes="side_bar_label")
-                    yield Digits(str(total_expenses), id="total_expense_digits")
+                    
                     yield Rule(line_style="heavy")
                     yield tree
                     yield Rule(line_style="heavy")
 
-                    # Filter time period
-                    yield Label("Filter by time", classes="side_bar_label")
-
-                    yield OptionList(
-                        "All time",
-                        "This year",
-                        "This month",
-                        "This week",
-                        classes="time_period_option_list"
-                    )
+                
 
                 yield Button("Return", classes="return_button")
+        
+            
 
         yield Header()
         yield Footer()
 
+class SummaryTab(Static):
+    def __init__(self, 
+                 total_expenses: float | int, 
+                 year_expenses: float | int, 
+                 month_expenses: float | int, 
+                 week_expenses: float | int) -> None:
+        
+        super().__init__()
+        self.total_expenses = total_expenses
+        self.year_expenses = year_expenses
+        self.month_expenses = month_expenses
+        self.week_expenses = week_expenses
+
+        self.id = "summary_tab"
+        self.classes = "expense_tabbed"
+    
+    def compose(self) -> ComposeResult:
+        with HorizontalGroup(classes="expense_digits_by_time"):
+            with Static():
+                yield Label("Total expenses", classes="side_bar_label")
+                yield Digits(f"${self.total_expenses:,.2f}", id="total_expense_digits")
+            
+            with Static():
+                yield Label("This year's expenses", classes="side_bar_label")
+                yield Digits(f"${self.year_expenses:,.2f}", id="year_expense_digits", classes="filtered_expense_digits")
+                
+            with Static():
+                yield Label("This month's expenses", classes="side_bar_label")
+                yield Digits(f"${self.month_expenses:,.2f}", id="month_expense_digits", classes="filtered_expense_digits")
+
+            with Static():
+                yield Label("This week's expenses", classes="side_bar_label")
+                yield Digits(f"${self.week_expenses:,.2f}", id="week_expense_digits", classes="filtered_expense_digits")
 
 
-# union
+
+
+
+
+
+        yield VerticalScroll()
+
+
+
+# functions, fns, funcs, unions, etc.
 
 def is_integer(value: str) -> bool:
     try:
@@ -231,5 +287,14 @@ def is_integer(value: str) -> bool:
     except ValueError:
         return False
 
-    def on_mount(self) -> None:
-        self.title = "Your Expenses"
+
+
+def is_expense_this_year(expense_date: datetime, current_date: datetime) -> tuple[bool, int]:
+    return expense_date.year == current_date.year, 1
+
+def is_expense_this_month(expense_date: datetime, current_date: datetime) -> tuple[bool, int]:
+    return expense_date.year == current_date.year and expense_date.month == current_date.month, 2
+
+def is_expense_this_week(expense_date: datetime, current_date: datetime) -> tuple[bool, int]:
+    # isocalendar() returns a tuple (year, week number, weekday)
+    return expense_date.isocalendar()[1] == current_date.isocalendar()[1] and expense_date.year == current_date.year, 3

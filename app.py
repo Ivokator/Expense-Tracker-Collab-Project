@@ -2,10 +2,10 @@ from textual import on, events
 from textual.app import App, ComposeResult
 from textual.containers import HorizontalGroup, VerticalScroll
 from textual.screen import Screen
-from textual.widgets import Button, Digits, Footer, Header, Label, OptionList, Static, Tabs
+from textual.widgets import Button, Digits, Footer, Header, Label, ListView, OptionList, Static, Tabs
 from widgets.info_screen import InfoScreen
 from widgets.main_menu import MainMenu
-from widgets.view_expenses import AddExpense, DeleteExpense, ViewExpenses
+from widgets.view_expenses import AddExpense, DeleteExpense, SummaryTab, ViewExpenses
 
 import json
 
@@ -70,12 +70,13 @@ class ExpenseTrackerApp(App):
         """Return to the previous screen."""
         self.app.pop_screen()
     
-    @on(OptionList.OptionSelected, ".time_period_option_list")
-    def on_option_list_option_selected(self, event: OptionList.OptionSelected) -> None:
-        option_name = str(event.option.prompt)
+    @on(ListView.Selected, ".time_period_list_view")
+    def on_list_view_option_selected(self, event: ListView.Selected) -> None:
+        option_name = str(event.item.id)
+        expense_screen = self.query_one(ViewExpenses)
 
-        if option_name in ["All time", "This year", "This month", "This week"]:
-            self.query_one(ViewExpenses).current_filter = option_name
+        if option_name in ["option_all_time", "option_this_year", "option_this_month", "option_this_week"]:
+            expense_screen.current_filter = option_name
         else:
             self.notify("Invalid option selected")
 
@@ -84,12 +85,10 @@ class ExpenseTrackerApp(App):
         activated_tab = str(event.tab.id)
         current_tab = self.query_one(ViewExpenses).children
 
-
         for widget in current_tab:
-            if isinstance(widget, Static):
+            if isinstance(widget, (Static, SummaryTab)):
                 if widget.id == activated_tab or widget.id == "docked_side_bar":
                     widget.remove_class("hidden")
                 else:
                     widget.add_class("hidden")
-                    widget.update()
         
