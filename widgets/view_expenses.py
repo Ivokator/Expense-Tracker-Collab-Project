@@ -9,7 +9,7 @@ from textual.widgets import Button, Collapsible, ContentSwitcher, Digits, Footer
 from textual_plotext import PlotextPlot
 
 
-
+import re
 import json
 from datetime import datetime
 
@@ -106,14 +106,91 @@ class DeleteExpense(ModalScreen):
                 json.dump(data, file, indent=4, sort_keys=True, separators=(',', ': '))
         self.app.pop_screen()
         self.app.push_screen(ViewExpenses()) # dammit, this is a hacky way to update the ViewExpenses screen
-        
+
+class DeleteCategory(ModalScreen):
+
+    category_name = reactive("this category", recompose=True)
+
+    def compose(self) -> ComposeResult:
+        with Static(f"Are you sure you want to delete [bold italic]{self.category_name}[/]?", id="delete_confirmation_static"):
+            yield Button("Yes", variant="error", id="confirm_delete")
+            yield Button("No", variant="primary", id="cancel_delete")
+
+            
+    @on(Button.Pressed, "#confirm_delete")
+    def delete_category(self, event: Button.Pressed) -> None:
+        with open('user_data/expenses.json', 'r') as file:
+            data = json.load(file)
+            data['categories'].pop(self.category_name)
+
+        with open('user_data/expenses.json', 'w') as file:
+            json.dump(data, file, indent=4, sort_keys=True, separators=(',', ': '))
+
+        self.app.pop_screen()
+        self.app.push_screen(ViewExpenses())
+
+
 class ErrorScreen(ModalScreen):
-    
     def compose(self) -> ComposeResult:
         with Static("Error: Invalid input", id="error_static"):
             yield Button("Return", variant="primary", classes="return_button")
+
+
+
+class IsValidJSONID(Validator):
+    def validate(self, value: str) -> ValidationResult:
+        disallowed_characters = re.compile('[^a-zA-Z0-9]')
+        if disallowed_characters.findall(value):
+            return self.failure("Invalid character!")
+        return self.success()
         
+class CheckUniqueCategory(Validator):
+    """Check if category already exists."""
+    def validate(self, value: str) -> ValidationResult:
+        with open('user_data/expenses.json', 'r') as file:
+            data = json.load(file)
+            if value in data['categories']:
+                return self.failure("Category already exists!")
+            else:
+                return self.success()
+
+class AddCategory(Screen):
+    valid_input: bool = False
+
+    def compose(self) -> ComposeResult:
+        with VerticalGroup():
+            self.category_name = Input(placeholder="Category name", id="add_category_input",validators=[IsValidJSONID(), CheckUniqueCategory()]) 
+
+            yield self.category_name
+
+        with HorizontalGroup():
+            yield Button("Add", classes="add_expense", id="add_category")
+            yield Button("Return", classes="return_button")
     
+    @on(Button.Pressed, "#add_category")
+    def on_add_category(self, event: Button.Pressed) -> None:
+        if self.valid_input:
+            self.add_category()
+    
+    @on(Input.Changed, "#add_category_input")
+    def on_input_changed(self, event: Input.Changed) -> None:
+        if event.validation_result and event.validation_result.is_valid:
+            self.valid_input = True
+        else:
+            self.valid_input = False
+
+    def add_category(self):
+        with open('user_data/expenses.json', 'r+') as file:
+            data = json.load(file)
+            data['categories'][str(self.category_name.value)] = []
+            file.seek(0)
+            json.dump(data, file, indent=4, sort_keys=True, separators=(',', ': '))
+            file.truncate()
+
+        self.app.pop_screen()
+        self.app.push_screen(ViewExpenses())
+
+
 class ViewExpenses(Screen):
 
     current_filter = reactive("option_all_time", recompose=True)
@@ -190,14 +267,17 @@ class ViewExpenses(Screen):
                                         if expense['description']:
                                             yield Label(expense['description'])
 
-                                        yield Button("Delete", id=category, classes="DeleteExpense", name=expense['name']) # absolutely trash disgusting code but it works
+                                        yield Button("Delete", id=category, variant="error", classes="DeleteExpense", name=expense['name']) # absolutely trash disgusting code but it works
                                     
 
                             if diminish_category:
                                 category_collapsible.add_class("diminish_category")
                                 yield Label("No expenses in this category.", classes="no_expenses_label")
+                            
+                            with HorizontalGroup(classes="category_options"):
 
-                            yield Button("Add an expense", id=category, classes="AddExpense")
+                                yield Button("Add an expense", id=category, classes="AddExpense")
+                                yield Button("Delete category", variant="error", classes="delete_category_button", name=category)
 
                 with Static(id="expense_side_bar"):
                         # Filter time period
@@ -304,6 +384,9 @@ class ViewExpenses(Screen):
                     plt.xticks(range(7))
                     yield plot
 
+
+
+            # Always left-docked side bar
             with Static(classes="side_bar", id="docked_side_bar"):
                 with VerticalScroll():
                     
@@ -312,7 +395,7 @@ class ViewExpenses(Screen):
                     yield Rule(line_style="heavy")
 
                 
-
+                yield Button("Add a category", classes="add_category_button")
                 yield Button("Return", classes="return_button")
                     
         yield Header()

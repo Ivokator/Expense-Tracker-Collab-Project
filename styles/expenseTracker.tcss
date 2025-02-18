@@ -70,7 +70,7 @@ HorizontalGroup {
     margin: 1;
 }
 
-.add_expense {
+.add_expense, .add_category_button{
     margin: 1;
 }
 
@@ -157,6 +157,12 @@ HorizontalGroup {
     padding: 0 2 0 2;
 }
 
+.delete_category_button {
+    width: auto;
+    margin: 0 1 0 1;
+}
+
+
 # IDs
 
 #info {
@@ -213,7 +219,8 @@ HorizontalGroup {
 
 # SCREENS
 
-AddExpense {
+
+AddExpense, AddCategory {
     align: center middle;
 }
 
@@ -235,6 +242,11 @@ DeleteExpense, ErrorScreen {
     align: center middle;
     layers: above;
 }
+
+DeleteCategory {
+    align: center middle;
+}
+
 # WIDGETS
 
 ExpenseCategory {

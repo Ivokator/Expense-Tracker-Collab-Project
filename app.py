@@ -5,7 +5,7 @@ from textual.screen import Screen
 from textual.widgets import Button, Digits, Footer, Header, Label, ListView, OptionList, Static, Tabs
 from widgets.info_screen import InfoScreen
 from widgets.main_menu import MainMenu
-from widgets.view_expenses import AddExpense, DeleteExpense, SummaryTab, ViewExpenses
+from widgets.view_expenses import AddCategory, AddExpense,  DeleteCategory, DeleteExpense, SummaryTab, ViewExpenses
 
 import json
 
@@ -17,7 +17,9 @@ class ExpenseTrackerApp(App):
         "ViewExpenses": ViewExpenses,
         "AddExpense": AddExpense,
         "InfoScreen": InfoScreen,
-        "DeleteExpense": DeleteExpense
+        "DeleteExpense": DeleteExpense,
+        "AddCategory": AddCategory,
+        "DeleteCategory": DeleteCategory
     }
     
     def compose(self) -> ComposeResult:
@@ -63,7 +65,7 @@ class ExpenseTrackerApp(App):
     def cancel_delete(self, event: Button.Pressed) -> None:
         """Cancel the deletion of an expense."""
         self.app.pop_screen()
-            
+
 
     @on(Button.Pressed, ".return_button")
     def go_back(self, event: Button.Pressed) -> None:
@@ -102,3 +104,14 @@ class ExpenseTrackerApp(App):
                 widget.remove_class("hidden") 
             else:
                 widget.add_class("hidden")
+        
+    @on(Button.Pressed, ".add_category_button")
+    def add_category_button(self, event: Button.Pressed) -> None:
+        self.push_screen("AddCategory")
+
+    @on(Button.Pressed, ".delete_category_button")
+    def delete_category_screen(self, event: Button.Pressed) -> None:
+        self.push_screen("DeleteCategory")
+        self.query_one(DeleteCategory).category_name = str(event.button.name)
+    
+
