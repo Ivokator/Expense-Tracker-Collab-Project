@@ -88,7 +88,17 @@ class ExpenseTrackerApp(App):
         for widget in current_tab:
             if isinstance(widget, (Static, SummaryTab)):
                 if widget.id == activated_tab or widget.id == "docked_side_bar":
-                    widget.remove_class("hidden")
+                    widget.remove_class("hidden") # <--- damn this is very smart 
                 else:
                     widget.add_class("hidden")
-        
+
+    @on(Tabs.TabActivated, ".spending_trends_tabs")
+    def switch_spending_trends_tabs(self, event: Tabs.TabActivated) -> None:
+        activated_tab = str(event.tab.id)
+        spending_trends_tabs = self.query_one(ViewExpenses).query(".spending_trends_tabbed")
+
+        for widget in spending_trends_tabs:
+            if widget.id == activated_tab:
+                widget.remove_class("hidden") 
+            else:
+                widget.add_class("hidden")

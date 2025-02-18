@@ -6,7 +6,7 @@ from textual.reactive import reactive
 from textual.screen import Screen, ModalScreen
 from textual.widget import Widget
 from textual.widgets import Button, Collapsible, ContentSwitcher, Digits, Footer, Header, Input, Label, ListItem, ListView, OptionList, Rule, Static, Tab, Tabs, Tree
-
+from textual_plotext import PlotextPlot
 
 
 
@@ -215,8 +215,94 @@ class ViewExpenses(Screen):
 
             yield SummaryTab(total_expenses, year_expenses, month_expenses, week_expenses)
             
+            # Spending Trends tab
             with (spending_trends_tab := Static(classes="expense_tabbed", id="spending_trends_tab")):
-                ...
+                yield Tabs(
+                    Tab("This Year", id="this_year_tab"),
+                    Tab("This Month", id="this_month_tab"),
+                    Tab("This Week", id="this_week_tab"),
+                    classes="spending_trends_tabs"
+                )
+
+                # This Month tab
+                with (this_month_tab := Static(classes="spending_trends_tabbed", id="this_month_tab")):
+                    plot = PlotextPlot()
+                    plt = plot.plt
+
+                    this_month_expenses = [0] * 30
+                    current_date = datetime.now()
+                    for category in data['categories']:
+                        for expense in data['categories'][category]:
+                            expense_date = datetime.strptime(expense['date'], "%Y-%m-%d")
+                            days_diff = (current_date - expense_date).days
+                            if 0 <= days_diff < 30:
+                                index = 29 - days_diff
+                                if 0 <= index < len(this_month_expenses):
+                                    this_month_expenses[index] += expense['amount']
+                                else:
+                                    this_month_expenses[index] = 0
+
+                    # Plot the expenses
+                    plt.plot(this_month_expenses)
+                    plt.title("Expenses in the Last 30 Days")
+                    plt.xlabel("Days")
+                    plt.ylabel("Amount ($)")
+                    plt.xticks(range(30))
+                    yield plot
+
+                # This Year tab
+                with (this_year_tab := Static(classes="spending_trends_tabbed", id="this_year_tab")):
+                    plot = PlotextPlot()
+                    plt = plot.plt
+                    this_year_expenses = [0] * 12
+                    current_date = datetime.now()
+
+                    for category in data['categories']:
+                        for expense in data['categories'][category]:
+                            expense_date = datetime.strptime(expense['date'], "%Y-%m-%d")
+                            
+                            months_diff = (current_date.year - expense_date.year) * 12 + (current_date.month - expense_date.month)
+                            
+                            if 0 <= months_diff < 12:
+                                index = 11 - months_diff
+                                if 0 <= index < len(this_year_expenses):
+                                    this_year_expenses[index] += expense['amount']
+                                else:
+                                    this_year_expenses[index] = 0
+
+                    # Plot the expenses
+                    plt.plot(this_year_expenses)
+                    plt.title("Expenses This Year")
+                    plt.xlabel("Months")
+                    plt.ylabel("Amount ($)")
+                    plt.xticks(range(12))
+                    yield plot
+
+                # This Week tab
+                with (this_week_tab := Static(classes="spending_trends_tabbed", id="this_week_tab")):
+                    plot = PlotextPlot()
+                    plt = plot.plt
+
+                    this_week_expenses = [0] * 7
+                    current_date = datetime.now()
+                    for category in data['categories']:
+                        for expense in data['categories'][category]:
+                            expense_date = datetime.strptime(expense['date'], "%Y-%m-%d")
+                            days_diff = (current_date - expense_date).days
+                            if 0 <= days_diff < 7:
+                                index = 6 - days_diff
+                                if 0 <= index < len(this_week_expenses):
+                                    this_week_expenses[index] += expense['amount']
+                                else:
+                                    this_week_expenses[index] = 0
+
+                    # Plot the expenses
+                    plt.plot(this_week_expenses)
+                    plt.title("Expenses This Week")
+                    plt.xlabel("Days")
+                    plt.ylabel("Amount ($)")
+                    plt.xticks(range(7))
+                    yield plot
 
             with Static(classes="side_bar", id="docked_side_bar"):
                 with VerticalScroll():
@@ -228,9 +314,7 @@ class ViewExpenses(Screen):
                 
 
                 yield Button("Return", classes="return_button")
-        
-            
-
+                    
         yield Header()
         yield Footer()
 
@@ -267,12 +351,6 @@ class SummaryTab(Static):
             with Static():
                 yield Label("This week's expenses", classes="side_bar_label")
                 yield Digits(f"${self.week_expenses:,.2f}", id="week_expense_digits", classes="filtered_expense_digits")
-
-
-
-
-
-
 
         yield VerticalScroll()
 

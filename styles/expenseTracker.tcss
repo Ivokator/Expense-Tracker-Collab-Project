@@ -59,8 +59,6 @@ HorizontalGroup {
     min-height: 3;
 }
 
-
-
 .expense_collapsible Label {
     align-vertical: middle;
     background: $boost;

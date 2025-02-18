@@ -1,1 +1,2 @@
 textual==1.0.0
+textual-plotext==1.0.0
