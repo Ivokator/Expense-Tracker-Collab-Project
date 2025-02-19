@@ -522,15 +522,6 @@ class SummaryTab(Static):
 
 # functions, fns, funcs, unions, etc.
 
-def is_integer(value: str) -> bool:
-    try:
-        int(value)
-        return True
-    except ValueError:
-        return False
-
-
-
 def is_expense_this_year(expense_date: datetime, current_date: datetime) -> tuple[bool, int]:
     return expense_date.year == current_date.year, 1
 

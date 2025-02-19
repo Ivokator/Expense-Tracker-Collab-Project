@@ -25,6 +25,7 @@ Contributers:
 
 Python third-party packages used:
     - Textual 1.0.0
+    - Textual-plotext 1.0.0
     
         """), id="info")
 
