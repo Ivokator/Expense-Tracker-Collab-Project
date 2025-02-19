@@ -1,10 +1,18 @@
+
 # Expense-Tracker-Collab-Project
+## Installation
 
-## Instructions / How to Use
+Install all required dependencies
 
+```bash
+  pip install -r requirements.txt
+```
 
+Run the app
 
-
+```bash
+  python main.py
+```
 ## Credits
 
 ### Jasper Wan (Ivokator)
@@ -20,3 +28,4 @@
 - Project structuring
 - 'Expense viewer' functionality
 - 'Adding expenses' functionality
+- Spending Trends tab
