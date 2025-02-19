@@ -5,7 +5,7 @@ from textual.screen import Screen
 from textual.widgets import Button, Digits, Footer, Header, Label, ListView, OptionList, Static, Tabs
 from widgets.info_screen import InfoScreen
 from widgets.main_menu import MainMenu
-from widgets.view_expenses import AddCategory, AddExpense,  DeleteCategory, DeleteExpense, SummaryTab, ViewExpenses
+from widgets.view_expenses import AddCategory, AddExpense,  DeleteCategory, DeleteExpense, ErrorScreen, SummaryTab, ViewExpenses
 
 import json
 
@@ -19,7 +19,8 @@ class ExpenseTrackerApp(App):
         "InfoScreen": InfoScreen,
         "DeleteExpense": DeleteExpense,
         "AddCategory": AddCategory,
-        "DeleteCategory": DeleteCategory
+        "DeleteCategory": DeleteCategory,
+        "ErrorScreen": ErrorScreen
     }
     
     def compose(self) -> ComposeResult:
@@ -107,11 +108,14 @@ class ExpenseTrackerApp(App):
         
     @on(Button.Pressed, ".add_category_button")
     def add_category_button(self, event: Button.Pressed) -> None:
+
         self.push_screen("AddCategory")
 
     @on(Button.Pressed, ".delete_category_button")
     def delete_category_screen(self, event: Button.Pressed) -> None:
         self.push_screen("DeleteCategory")
         self.query_one(DeleteCategory).category_name = str(event.button.name)
-    
+
+    def invalid_input_error(self) -> None:
+        self.push_screen("ErrorScreen")
 

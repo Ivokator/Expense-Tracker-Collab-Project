@@ -239,6 +239,7 @@ ViewExpenses {
 }
 
 DeleteExpense, ErrorScreen {
+    width: auto;
     align: center middle;
     layers: above;
 }

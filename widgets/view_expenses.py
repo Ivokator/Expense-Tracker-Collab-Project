@@ -8,32 +8,58 @@ from textual.widget import Widget
 from textual.widgets import Button, Collapsible, ContentSwitcher, Digits, Footer, Header, Input, Label, ListItem, ListView, OptionList, Rule, Static, Tab, Tabs, Tree
 from textual_plotext import PlotextPlot
 
-
 import re
 import json
 from datetime import datetime
+
 
 class AddExpense(Screen):
     """A widget to add an expense."""
 
     #Do NOT touch this code, if it breaks, it breaks. I'm not fixing it.
+        # 2025-02-18: haha i did
 
     category_name = reactive("this category")
+
+    valid_name: bool = False
+    valid_amount: bool = False
+    valid_date: bool = False
+
+    
 
     def compose(self) -> ComposeResult:
 
         yield Header()
         yield Footer()
-        with VerticalGroup():
-            self.expense_input = Input(placeholder="Expense")
+        with VerticalGroup(classes="add_expense_group"):
+            self.expense_input = Input(
+                placeholder="Expense name", 
+                valid_empty=False, 
+                id="expense_name",
+                validators=[
+                    IsNotEmpty()
+                ]
+                )
             self.amount_input = Input(
+                id="expense_amount",
                 placeholder="Amount",
                 validators=[
-                    Function(is_integer)
+                    IsValidCurrency(),
+                    IsNotEmpty()
                     ]
                 )
             self.description_input = Input(placeholder="Description")
-            self.date_input = Input(placeholder="Date (year-month-day)") #TODO: Add a date picker
+            self.date_input = Input(
+                placeholder="Date of expense (YYYY-MM-DD)", 
+                max_length=10,
+                id="expense_date",
+                validators=[
+                    IsValidDate(),
+                    IsNotEmpty()
+                        ]
+                                    ) #TODO: Add a date picker
+            
+
             yield self.expense_input
             yield self.amount_input
             yield self.description_input
@@ -46,18 +72,43 @@ class AddExpense(Screen):
 
     @on(Button.Pressed, "#add_expense_button")
     def check_expense(self, event: Button.Pressed) -> None:
-        
-        if is_integer(self.amount_input.value) == False:
-            self.app.push_screen(ErrorScreen())
-        else:
+        if self.valid_name and self.valid_amount and self.valid_date:
             self.add_expense()
+        else:
+            self.app.push_screen("ErrorScreen")
 
-        
+    # most efficient way :)
+    @on(Input.Changed, "#expense_name")
+    def on_name_changed(self, event: Input.Changed) -> None:
+
+        if event.validation_result and event.validation_result.is_valid:
+            self.valid_name = True
+        else:
+            if event.validation_result:
+                self.notify(str(event.validation_result.failure_descriptions))
+            self.valid_name = False
+
+    @on(Input.Changed, "#expense_amount")
+    def on_amount_changed(self, event: Input.Changed) -> None:
+
+        if event.validation_result and event.validation_result.is_valid:
+            self.valid_amount = True
+        else:
+            self.valid_amount = False
+
+    @on(Input.Changed, "#expense_date")
+    def on_date_changed(self, event: Input.Changed) -> None:
+
+        if event.validation_result and event.validation_result.is_valid:
+            self.valid_date = True
+        else:
+            self.valid_date = False
+
     def add_expense(self):
         
         expense = {
             "name": self.expense_input.value,
-            "amount": float(self.amount_input.value),
+            "amount": float(self.amount_input.value.lstrip("$")),
             "description": self.description_input.value,
             "date": self.date_input.value
         }
@@ -75,6 +126,34 @@ class AddExpense(Screen):
 
         self.app.pop_screen()
         self.app.push_screen(ViewExpenses())
+
+
+class IsNotEmpty(Validator):
+    def validate(self, value: str) -> ValidationResult:
+        if value:
+            return self.success()
+        else:
+            return self.failure("Value cannot be empty.")
+
+class IsValidCurrency(Validator):
+    def validate(self, value: str) -> ValidationResult:
+
+        # Input may have a '$' symbol
+        stripped_value = value.lstrip("$")
+
+        try:
+            float(stripped_value)
+            return self.success()
+        except ValueError:
+            return self.failure("Invalid number!")
+
+class IsValidDate(Validator):
+    def validate(self, value: str) -> ValidationResult:
+        try:
+            datetime.fromisoformat(value)
+            return self.success()
+        except ValueError:
+            return self.failure("Invalid date!")
 
 class DeleteExpense(ModalScreen):
     """A widget to confirm deletion of an expense."""
@@ -131,8 +210,10 @@ class DeleteCategory(ModalScreen):
 
 
 class ErrorScreen(ModalScreen):
+    """Error screen for invalid inputs"""
+
     def compose(self) -> ComposeResult:
-        with Static("Error: Invalid input", id="error_static"):
+        with Static(f"Error: Invalid input", id="error_static"):
             yield Button("Return", variant="primary", classes="return_button")
 
 
